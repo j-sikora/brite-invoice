@@ -1,5 +1,6 @@
 package pl.com.britenet.briteinvoice.services;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +9,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -21,6 +25,7 @@ public class InvoiceReaderService {
         this.pdfTemplate = pdfTemplate;
     }
 
+    @SneakyThrows
     public String getAmount(String path) {
         File file = new File(path);
         try(InputStream inputStream = new FileInputStream(file)) {
@@ -30,22 +35,13 @@ public class InvoiceReaderService {
             Pattern r = Pattern.compile("(ZAPŁACONO DO ZAPŁATY\\r?\\n)(\\d\\s+\\d*,?\\d\\d)");
             // Now create matcher object.
             Matcher m = r.matcher(pdfText);
+            String amount = null;
             while(m.find()) {
                 System.out.println("group:"+m.group(2));
+                amount = m.group(2);
             }
-            return m.matches() ? m.group(1) : null;
-
-        }
-        catch (IOException e) {
-            log.error("Could not open file: " + path, e);
-            return null;
+            return amount;
         }
     }
 
-    @PostConstruct
-    private void test() {
-        String path = "D:/IdeaProjects/brite-invoice/src/test/resources/elisoft-faktura-2.pdf";
-
-        System.out.println(getAmount(path));
-    }
 }
