@@ -13,7 +13,7 @@ class InvoiceReaderServiceTest extends Specification {
     def 'check elisoft invoice amount'() {
         given:
             ClassLoader classLoader = getClass().getClassLoader();
-            URL resource = classLoader.getResource('elisoft-faktura.pdf');
+            URL resource = classLoader.getResource('elisoft-invoice.pdf');
             def file = resource.getFile()
         when:
             def amount = invoiceReaderService.getAmount(file)
